@@ -2,28 +2,14 @@
 
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
-
-	protected function _initDoctype()
-    {
-		$this->bootstrap('view');
-		$view = $this->getResource('view');
-		$view->doctype('XHTML1_STRICT');
-    }
     
-    protected function _initView() 
+    protected function _initAutoload()
     {
-    	$view = new Zend_View();
-    	
-    	$view->headTitle('Application Title Goes Here');
-    	
-    	// Add it to the ViewRenderer
-        $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper(
-            'ViewRenderer'
-        );
-        $viewRenderer->setView($view);
-
-        // Return it, so that it can be stored by the bootstrap
-        return $view;
+        $autoloader = new Zend_Application_Module_Autoloader(array(
+            'namespace' => 'Default_',
+            'basePath'  => dirname(__FILE__),
+        ));
+        return $autoloader;
     }
 
 }
