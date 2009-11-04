@@ -8,7 +8,22 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		$this->bootstrap('view');
 		$view = $this->getResource('view');
 		$view->doctype('XHTML1_STRICT');
-		$view->headTitle('Application Title Goes Here');
+    }
+    
+    protected function _initView() 
+    {
+    	$view = new Zend_View();
+    	
+    	$view->headTitle('Application Title Goes Here');
+    	
+    	// Add it to the ViewRenderer
+        $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper(
+            'ViewRenderer'
+        );
+        $viewRenderer->setView($view);
+
+        // Return it, so that it can be stored by the bootstrap
+        return $view;
     }
 
 }
