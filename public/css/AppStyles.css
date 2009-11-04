@@ -1,0 +1,33 @@
+/* Bookmark Listing */
+ul.bookmarks li {
+	list-style-image: none;
+	list-style-position: outside;
+	list-style-type: none;
+}
+
+ul.bookmarks li.bookmark {	
+	border-top: 1px solid #AAA;
+	margin: 0;
+	padding: 3px;
+}
+
+.bookmark h4 {
+	margin: 0 4em 2px 0;
+	font-size: 130%;
+}
+
+ul.tags {
+	float: right;
+}
+
+ul.tags li.tag {
+	display: inline !important;
+	font-size: 92%;
+}
+
+.clr {
+	clear: both;
+	font-size: 1%;
+	height: 0;
+	line-height: 0.1em;
+}
