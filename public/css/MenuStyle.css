@@ -190,7 +190,8 @@
 
 .AspNet-Menu-WithChildren>.AspNet-Menu-Selected,
 .AspNet-Menu-WithChildren>.AspNet-Menu-ChildSelected,
-ul.AspNet-Menu li.AspNet-Menu-Selected
+ul.AspNet-Menu li.AspNet-Menu-Selected,
+ul.AspNet-Menu li.active
 {
     background: #FFFF99;
 }
