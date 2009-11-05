@@ -12,9 +12,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         return $autoloader;
     }
     
-    protected function _initOptions () {
+    protected function _initConfig () {
     	$registry = Zend_Registry::getInstance();
-		$registry->options = $this->getOptions();
+		$registry->config = new Zend_Config($this->getOptions(), true);
+		return $registry->config;
     }
     
 	protected function _initDb()
@@ -25,6 +26,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		
 			$registry = Zend_Registry::getInstance();
 			$registry->db = $db;
+			return $resource;
 		}
 	}
 	
@@ -33,6 +35,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		if ($this->hasPluginResource('cas')) {
 			$resource = $this->getPluginResource('cas');
 			$resource->init();
+			return $resource;
 		}
 	}
 }
