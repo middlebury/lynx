@@ -5,7 +5,7 @@ class Lynx_UserController extends Zend_Controller_Action
 {
     public function indexAction()
     {
-//     	$this->_forward('index', 'catalogs');
+    	$this->_forward('list');
     }
     
     /**

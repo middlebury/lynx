@@ -1,0 +1,47 @@
+<?php
+
+print $this->paginationControl($this->paginator, 'Sliding', 'mark_pagination_control.phtml');
+
+print "\n<ul class='bookmarks'>";
+foreach ($this->paginator as $mark) {
+	print "\n\t<li class='bookmark'>";
+	print "\n\t\t<div class='data'>";
+	
+	print "\n\t\t\t<h4>";
+	print "\n\t\t\t\t<a href=\"".$this->escape($mark->url)."\" target='_blank'>";
+	print $this->escape($mark->url);
+	print "</a>";
+	print "\n\t\t\t</h4>";
+	
+// 	print "\n\t\t\t<div class='full_url'>";
+// 	print "\n\t\t\t\t<a href=\"".$this->escape($mark->url)."\" target='_blank'>";
+// 	print $this->escape($mark->url);
+// 	print "</a>";
+// 	print "\n\t\t\t</div>";
+	
+// 	print "\n\t\t\t<div class='notes'>";
+// 	print $this->escape($mark->notes);
+// 	print "\n\t\t\t</div>";
+	
+	print "\n\t\t\t<ul class='tags'>";
+	foreach ($mark->tags as $tag) {
+		print "\n\t\t\t\t<li class='tag'>";
+		print "\n\t\t\t\t<a href=\"".$this->url(array('controller' => 'tags', 'action' => 'view', 'tag' => $tag, 'page' => null))."\">";
+		print $this->escape($tag);
+		print "</a>";
+		print "\n\t\t\t\t</li>";
+	}
+	print "\n\t\t\t</li>";
+	
+	print "\n\t\t</div>";
+	print "\n\t\t<div class='actions'>";
+	
+	print "\n\t\t</div>";
+	
+	print "\n\t\t<div class='clr'></div>";
+	print "\n\t</li>";
+}
+print "\n</ul>";
+
+print $this->paginationControl($this->paginator, 'Sliding', 'mark_pagination_control.phtml');
+
