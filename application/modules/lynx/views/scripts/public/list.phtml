@@ -26,7 +26,7 @@ foreach ($this->paginator as $link) {
 	print "\n\t\t\t<ul class='tags'>";
 	foreach ($link->tags as $tag) {
 		print "\n\t\t\t\t<li class='tag'>";
-		print "\n\t\t\t\t<a href=\"".$this->url(array('controller' => 'tags', 'action' => 'view', 'tag' => $tag, 'page' => null))."\">";
+		print "\n\t\t\t\t<a href=\"".$this->url(array('controller' => 'public', 'action' => 'viewtag', 'tag' => $tag, 'page' => null))."\">";
 		print $this->escape($tag);
 		print "</a>";
 		print "\n\t\t\t\t</li>";
