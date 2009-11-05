@@ -17,39 +17,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License (GPL)
  */
 abstract class Lynx_Model_Manager_Abstract {
-		
-	/**
-	 * Answer the configuration
-	 * 
-	 * @return Zend_Config
-	 * @access public
-	 * @since 11/3/09
-	 * @static
-	 */
-	public static function getConfiguration () {
-		if (!isset(self::$config))
-			throw new Exception('No configuration set.');
-		return self::$config;
-	}
-	
-	private static $config;
-	
-	/**
-	 * Set the configuration
-	 * 
-	 * @param Zend_Config $config
-	 * @return Zend_Config
-	 * @access public
-	 * @since 11/3/09
-	 * @static
-	 */
-	public static function setConfiguration (Zend_Config $config) {
-		if (isset(self::$config))
-			throw new Exception('Configuration already set.');
-		
-		self::$config = $config;
-		return self::$config;
-	}
 	
 	private $db;
 	
@@ -62,7 +29,9 @@ abstract class Lynx_Model_Manager_Abstract {
 	 */
 	public function __construct () {
 		// initialize the database
-		$this->db = Zend_Db::factory(self::getConfiguration()->resources->db);
+		$this->db = Zend_Registry::get('db');
+		if (!$this->db)
+			throw new Exception('No db registered');
 	}
 	
 	/**

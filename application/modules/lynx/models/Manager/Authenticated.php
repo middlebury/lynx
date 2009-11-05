@@ -32,27 +32,13 @@ class Lynx_Model_Manager_Authenticated
 	public function __construct () {
 		parent::__construct();
 		
-		// Initialize CAS
-		$config = self::getConfiguration();
-		
-		if (!isset($config->cas->host))
-			throw new Exception('Configuration Error: no cas.host');
-		if (!isset($config->cas->port))
-			throw new Exception('Configuration Error: no cas.port');
-		if (!isset($config->cas->path))
-			throw new Exception('Configuration Error: no cas.path');
-		
-		phpCAS::client(CAS_VERSION_2_0, $config->cas->host, intval($config->cas->port), $config->cas->path, false);
-		if (isset($config->cas->sever_cert))
-			phpCAS::setCasServerCACert($config->cas->sever_cert);
-		else
-			phpCAS::setNoCasServerValidation();
-		
 		// Authenticate
 		phpCAS::forceAuthentication();
 		
-		if (isset($config->cas->attras->first_name) && isset($config->cas->attras->last_name))
-			$displayName = phpCAS::getAttribute($config->cas->attras->first_name).' '.phpCAS::getAttribute($config->cas->attras->last_name);
+		$config = Zend_Registry::get('config');
+		
+		if (isset($config->resources->cas->attras->first_name) && isset($config->resources->cas->attras->last_name))
+			$displayName = phpCAS::getAttribute($config->resources->cas->attras->first_name).' '.phpCAS::getAttribute($config->resources->cas->attras->last_name);
 		else
 			$displayName = phpCAS::getUser();
 		$this->userId = $this->getUserId(phpCAS::getUser(), $displayName);
