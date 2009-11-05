@@ -72,41 +72,6 @@ abstract class Lynx_Model_Manager_Abstract {
 	}
 	
 	/**
-	 * Answer all links
-	 * 
-	 * @return array of Lynx_Marks
-	 * @access public
-	 * @since 11/4/09
-	 */
-	public function getAllMarks () {
-		$select = $this->db->select()
-			->from('mark',
-				array('id', 'fk_user', 'description', 'notes'))
-			->join('url', 'mark.fk_url = url.id',
-				array('url'))
-			->joinLeft('tag', 'tag.fk_mark = mark.id',
-				array('tag'));
-		
-		$this->addUserRestriction($select);
-		
-		$stmt = $this->db->query($select);
-		$marks = array();
-		foreach ($stmt->fetchAll() as $row) {
-			$id = $row['id'];
-			
-			// Create the mark if needed.
-			if (!isset($marks[$id]))
-				$marks[$id] = new Lynx_Model_Mark($id, $row['fk_user'], $row['url'], $row['description'], $row['notes']);
-			
-			// Populat a tag if exists
-			if (!is_null($row['tag']))
-				$marks[$id]->loadTag($row['tag']);
-		}
-		
-		return $marks;
-	}
-	
-	/**
 	 * Add a restriction to a particular user.
 	 * 
 	 * @param Zend_Db_Select $select

@@ -35,3 +35,11 @@ ul.tags li.tag {
 .paginationControl {
 	text-align: right;
 }
+
+.num_marks {
+	float: right;
+	color: #FFF;
+	background-color: #09357A;
+	border: 1px #999 solid;
+	padding: 3px;
+}

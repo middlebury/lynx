@@ -16,15 +16,13 @@
  * @copyright Copyright &copy; 2009, Middlebury College
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License (GPL)
  */
-class Lynx_Model_Mark {
+class Lynx_Model_Link {
 	
 	private $id;
-	private $userId;
 	private $url;
 	private $title;
-	private $description;
-	private $notes;
 	private $tags;
+	private $numMarks;
 		
 	/**
 	 * Constructor
@@ -37,14 +35,12 @@ class Lynx_Model_Mark {
 	 * @access public
 	 * @since 11/4/09
 	 */
-	public function __construct ($id, $userId, $url, $title, $description, $notes) {
+	public function __construct ($id, $url, $title, $numMarks = null) {
 		$this->id = $id;
-		$this->userId = $userId;
 		$this->url = $url;
 		$this->title = $title;
-		$this->description = $description;
-		$this->notes = $notes;
 		$this->tags = array();
+		$this->numMarks = intval($numMarks);
 	}
 	
 	/**
