@@ -38,5 +38,16 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 			return $resource;
 		}
 	}
+	
+	protected function _initSession ()
+	{
+		if ($this->hasPluginResource('session')) {
+			$this->bootstrap('db');
+			$resource = $this->getPluginResource('session');
+			$resource->init();
+			Zend_Session::start();
+			return $resource;
+		}
+	}
 }
 
