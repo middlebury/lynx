@@ -11,6 +11,29 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         ));
         return $autoloader;
     }
-
+    
+    protected function _initOptions () {
+    	$registry = Zend_Registry::getInstance();
+		$registry->options = $this->getOptions();
+    }
+    
+	protected function _initDb()
+	{
+		if ($this->hasPluginResource('db')) {
+			$resource = $this->getPluginResource('db');
+			$db = $resource->getDbAdapter();
+		
+			$registry = Zend_Registry::getInstance();
+			$registry->db = $db;
+		}
+	}
+	
+	protected function _initCas()
+	{
+		if ($this->hasPluginResource('cas')) {
+			$resource = $this->getPluginResource('cas');
+			$resource->init();
+		}
+	}
 }
 
