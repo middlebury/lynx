@@ -27,5 +27,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 			$registry->db = $db;
 		}
 	}
+	
+	protected function _initCas()
+	{
+		if ($this->hasPluginResource('cas')) {
+			$resource = $this->getPluginResource('cas');
+			$resource->init();
+		}
+	}
 }
 
