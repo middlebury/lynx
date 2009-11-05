@@ -50,6 +50,6 @@ class Default_Resource_View extends Zend_Application_Resource_ResourceAbstract
     }
     
     public function getBaseUrl() {
-    	return preg_replace('/([^\/]*)$/', '', $_SERVER['PHP_SELF'] );
+    	return preg_replace('/([^\/]*)$/', '', $_SERVER['SCRIPT_NAME'] );
     }
 }
