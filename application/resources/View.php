@@ -37,6 +37,8 @@ class Default_Resource_View extends Zend_Application_Resource_ResourceAbstract
 			
 // 			$view->headScript()->appendFile($this->getBaseUrl().'js/analytics.js');
 			
+			$view->addHelperPath(APPLICATION_PATH.'/views/helpers/', 'Default_Helper');
+			
 			$viewRenderer =
 				Zend_Controller_Action_HelperBroker::getStaticHelper(
 					'ViewRenderer'
