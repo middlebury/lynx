@@ -54,6 +54,9 @@
       <testPHPUnitConfigFile/>
       <testApplicationDirectory>
         <testApplicationBootstrapFile/>
+        <testApplicationControllerDirectory>
+          <testApplicationControllerFile/>
+        </testApplicationControllerDirectory>
       </testApplicationDirectory>
       <testLibraryDirectory>
         <testLibraryBootstrapFile/>
