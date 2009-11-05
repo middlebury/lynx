@@ -8,24 +8,34 @@ class Lynx_PublicController extends Zend_Controller_Action
     	$this->_forward('recent');
     }
     
+    public function init() {
+		$this->manager = new Lynx_Model_Manager_Public();
+	}
 
     public function recentAction () {
-    	$manager = new Lynx_Model_Manager_Public();
-    	$this->view->paginator = Zend_Paginator::factory($manager->getAllLinksByTime());
+    	$this->view->paginator = Zend_Paginator::factory($this->manager->getAllLinksByTime());
     	$this->view->paginator->setCurrentPageNumber($this->_getParam('page'));
     	$this->render('list');
     }
 
     public function popularAction () {
-    	$manager = new Lynx_Model_Manager_Public();
-    	$this->view->paginator = Zend_Paginator::factory($manager->getAllLinksByPopularity());
+    	$this->view->paginator = Zend_Paginator::factory($this->manager->getAllLinksByPopularity());
     	$this->view->paginator->setCurrentPageNumber($this->_getParam('page'));
     	$this->render('list');
     }
     
     public function tagsAction () {
-    	$manager = new Lynx_Model_Manager_Public();
-    	$this->view->cloud = new Zend_Tag_Cloud(array('itemList' => $manager->getTags()));
+    	$tags = $this->manager->getTags();
+    	foreach ($tags as $tag) {
+    		$tag->setParam('url', $this->_helper->url('viewtag', 'public', 'lynx', array('tag' => $tag->getTitle())));
+    	}
+    	$this->view->cloud = new Zend_Tag_Cloud(array('itemList' => $tags));
     	$this->render('tags', null, true);
+    }
+    
+    public function viewtagAction () {
+    	$this->view->paginator = Zend_Paginator::factory($this->manager->getLinksForTagByPopularity($this->_getParam('tag')));
+    	$this->view->paginator->setCurrentPageNumber($this->_getParam('page'));
+    	$this->render('list');
     }
 }

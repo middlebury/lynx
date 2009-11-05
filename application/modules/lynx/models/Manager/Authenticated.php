@@ -65,8 +65,43 @@ class Lynx_Model_Manager_Authenticated
 				array('tag'));
 		
 		$this->addUserRestriction($select);
-		var_dump($select->__toString());
-		$stmt = $this->getDb()->query($select);
+		$stmt = $select->query();
+		$marks = array();
+		foreach ($stmt->fetchAll() as $row) {
+			$id = $row['id'];
+			
+			// Create the mark if needed.
+			if (!isset($marks[$id]))
+				$marks[$id] = new Lynx_Model_Mark($id, $row['fk_user'], $row['url'], $row['title'], $row['description'], $row['notes']);
+			
+			// Populat a tag if exists
+			if (!is_null($row['tag']))
+				$marks[$id]->loadTag($row['tag']);
+		}
+		
+		return $marks;
+	}
+	
+	/**
+	 * Answer all links for a given tag
+	 * 
+	 * @param string $tag
+	 * @return array of Lynx_Marks
+	 * @access public
+	 * @since 11/4/09
+	 */
+	public function getMarksForTag ($tag) {
+		$select = $this->getDb()->select()
+			->from('mark',
+				array('id', 'fk_user', 'description', 'notes'))
+			->join('url', 'mark.fk_url = url.id',
+				array('url', 'title'))
+			->joinLeft('tag', 'tag.fk_mark = mark.id',
+				array('tag'))
+			->where('tag = ?', $tag);
+		
+		$this->addUserRestriction($select);
+		$stmt = $select->query();
 		$marks = array();
 		foreach ($stmt->fetchAll() as $row) {
 			$id = $row['id'];
@@ -93,6 +128,31 @@ class Lynx_Model_Manager_Authenticated
 	 */
 	protected function addUserRestriction (Zend_Db_Select $select) {
 		return $select->where('mark.fk_user = ?', $this->userId);
+	}
+	
+	/**
+	 * Answer an array of all of the tags.
+	 * 
+	 * @return Zend_Tag_ItemList
+	 * @access public
+	 * @since 11/5/09
+	 */
+	public function getTags () {
+		$select = $this->getDb()->select()
+			->from('mark',
+				array())
+			->joinLeft('tag', 'tag.fk_mark = mark.id',
+				array('title' => 'tag', 'weight' => 'COUNT(fk_mark)'))
+			->where('tag IS NOT NULL')
+			->group('tag')
+			->order('tag');
+		$this->addUserRestriction($select);
+		$stmt = $select->query();
+		$list = new Zend_Tag_ItemList();
+		foreach ($stmt->fetchAll() as $row) {
+			$list[] = new Zend_Tag_Item($row);
+		}
+		return $list;
 	}
 	
 }

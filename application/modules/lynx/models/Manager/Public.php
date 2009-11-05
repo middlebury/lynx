@@ -82,6 +82,41 @@ FROM
 	}
 	
 	/**
+	 * Answer all links
+	 * 
+	 * @param string $tag
+	 * @return array of Lynx_Marks
+	 * @access public
+	 * @since 11/4/09
+	 */
+	public function getLinksForTagByPopularity ($tag) {
+		$query = 
+"SELECT
+	meta_url.*,
+	tag
+FROM
+	(	SELECT 
+			url.*,
+			MAX(mark.create_time) AS create_time,
+			COUNT(mark.id) AS num_marks
+		FROM 
+			url 
+			INNER JOIN mark on url.id = mark.fk_url
+		GROUP BY url.id
+		ORDER BY num_marks DESC, create_time DESC
+	) AS meta_url
+	LEFT JOIN mark ON meta_url.id = mark.fk_url
+	LEFT JOIN tag ON tag.fk_mark = mark.id
+WHERE
+	tag = ?";
+		
+		
+		$stmt = $this->getDb()->prepare($query);
+		$stmt->execute(array($tag));
+		return $this->getLinksFromStatement($stmt);
+	}
+	
+	/**
 	 * Answer links from a statement
 	 * 
 	 * @param PDOStatement $stmt
