@@ -31,3 +31,7 @@ ul.tags li.tag {
 	height: 0;
 	line-height: 0.1em;
 }
+
+.paginationControl {
+	text-align: right;
+}

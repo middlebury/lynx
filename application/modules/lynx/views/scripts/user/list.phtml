@@ -42,3 +42,6 @@ foreach ($this->paginator as $mark) {
 	print "\n\t</li>";
 }
 print "\n</ul>";
+
+print $this->paginationControl($this->paginator, 'Sliding', 'mark_pagination_control.phtml');
+
