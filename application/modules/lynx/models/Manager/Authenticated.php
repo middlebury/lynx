@@ -69,6 +69,8 @@ class Lynx_Model_Manager_Authenticated
 				throw new InvalidArgumentException('Tag \''.$tag.'\' is not valid only letters, numbers and underscores are allowed.');
 		}
 		
+		$tags = array_unique($tags);
+		
 		$db = $this->getDb();
 		$db->beginTransaction();
 		
