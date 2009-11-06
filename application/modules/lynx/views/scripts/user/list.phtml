@@ -20,7 +20,7 @@ foreach ($this->paginator as $mark) {
 	print "\n\t\t\t</div>";
 	
 	print "\n\t\t\t<div class='notes'>";
-	print $this->escape($mark->notes);
+	print nl2br($this->escape($mark->notes));
 	print "\n\t\t\t</div>";
 	
 	print "\n\t\t\t<ul class='tags'>";
