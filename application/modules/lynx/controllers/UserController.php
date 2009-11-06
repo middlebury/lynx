@@ -38,4 +38,26 @@ class Lynx_UserController extends Zend_Controller_Action
     	$this->view->paginator->setCurrentPageNumber($this->_getParam('page'));
     	$this->render('list');
     }
+    
+    public function createAction () {
+        $request = $this->getRequest();
+        $form    = new Lynx_Form_Mark();
+
+        if ($this->getRequest()->isPost()) {
+            if ($form->isValid($request->getPost())) {
+            	$values = $form->getValues();
+				
+				// Strip any extra spaces and convert to an array
+            	$tags = explode(' ', preg_replace('/\s+/', ' ', $values['tags']));
+            	// Trim off any trailing whitespace or separators.
+            	array_walk($tags, create_function('&$tag', '$tag = trim($tag, " _");'));
+				
+                $mark = $this->manager->createMark($values['url'], $values['description'], $values['notes'], $tags);
+                
+                return $this->_helper->redirector('list');
+            }
+        }
+        
+        $this->view->form = $form;
+    }
 }

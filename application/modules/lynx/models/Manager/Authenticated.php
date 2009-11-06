@@ -49,23 +49,101 @@ class Lynx_Model_Manager_Authenticated
 	private $userDisplayName;
 	
 	/**
-	 * Answer all links
+	 * Create a new bookmark values should have already been filtered by the form.
 	 * 
-	 * @return array of Lynx_Marks
+	 * @param string $url
+	 * @param optional string $description
+	 * @param optional string $notes
+	 * @param optional array $tags
+	 * @return Lynx_Model_Mark
+	 * @access public
+	 * @since 11/6/09
+	 */
+	public function createMark ($url, $description = '', $notes = '', array $tags = array()) {
+		if (!strlen($url))
+			throw new InvalidArgumentException('No $url specified');
+		if (!is_array($tags))
+			throw new InvalidArgumentException('$tags must be an array.');
+		foreach ($tags as $tag) {
+			if (!preg_match('/^[a-z0-9_]+$/', $tag))
+				throw new InvalidArgumentException('Tag \''.$tag.'\' is not valid only letters, numbers and underscores are allowed.');
+		}
+		
+		$db = $this->getDb();
+		$db->beginTransaction();
+		
+		try {
+			// Get/Insert the URL
+			$urlId = $db->fetchOne(
+				$db->select()
+					->from('url', array('id'))
+					->where('url = ?', array($url)));
+			if (!$urlId) {
+				$db->insert('url', array('url' => $url));
+				$urlId = $db->lastInsertId();
+			}
+			
+			// Insert the mark
+			$db->insert('mark', array(
+				'fk_url' => $urlId, 
+				'fk_user' => $this->userId,
+				'description' => $description,
+				'notes' => $notes,
+				'create_time' => new Zend_Db_Expr('NOW()')));
+			$markId = $db->lastInsertId();
+			
+			// Insert the tags
+			foreach ($tags as $tag) {
+				$db->insert('tag', array('fk_mark' => $markId, 'tag' => $tag));
+			}
+			
+			$db->commit();
+		
+			return $this->getMark($markId);
+		} catch (Zend_Db_Statement_Exception $e) {
+			$db->rollback();
+			if ($e->getCode() == 23000)
+				throw new Exception('Already exists.');
+			else
+				throw $e;
+		}
+	}
+	
+	/**
+	 * Answer a bookmark
+	 * 
+	 * @param int $id
+	 * @return Lynx_Marks
 	 * @access public
 	 * @since 11/4/09
 	 */
-	public function getAllMarks () {
+	public function getMark ($id) {
 		$select = $this->getDb()->select()
 			->from('mark',
 				array('id', 'fk_user', 'description', 'notes'))
 			->join('url', 'mark.fk_url = url.id',
 				array('url', 'title'))
 			->joinLeft('tag', 'tag.fk_mark = mark.id',
-				array('tag'));
+				array('tag'))
+			->where('mark.id = ?', array($id));
 		
 		$this->addUserRestriction($select);
 		$stmt = $select->query();
+		$marks = $this->getMarksFromStatement($stmt);
+		if (!count($marks))
+			throw new Exception("Mark not found with id '$id'.");
+		return current($marks);
+	}
+	
+	/**
+	 * Answer marks from a statement
+	 * 
+	 * @param PDOStatement $stmt
+	 * @return array
+	 * @access protected
+	 * @since 11/5/09
+	 */
+	protected function getMarksFromStatement (Zend_Db_Statement $stmt) {
 		$marks = array();
 		foreach ($stmt->fetchAll() as $row) {
 			$id = $row['id'];
@@ -80,6 +158,28 @@ class Lynx_Model_Manager_Authenticated
 		}
 		
 		return $marks;
+	}
+	
+	/**
+	 * Answer all links
+	 * 
+	 * @return array of Lynx_Marks
+	 * @access public
+	 * @since 11/4/09
+	 */
+	public function getAllMarks () {
+		$select = $this->getDb()->select()
+			->from('mark',
+				array('id', 'fk_user', 'description', 'notes'))
+			->join('url', 'mark.fk_url = url.id',
+				array('url', 'title'))
+			->joinLeft('tag', 'tag.fk_mark = mark.id',
+				array('tag'))
+			->order('create_time DESC');
+		
+		$this->addUserRestriction($select);
+		$stmt = $select->query();
+		return $this->getMarksFromStatement($stmt);
 	}
 	
 	/**
@@ -102,20 +202,7 @@ class Lynx_Model_Manager_Authenticated
 		
 		$this->addUserRestriction($select);
 		$stmt = $select->query();
-		$marks = array();
-		foreach ($stmt->fetchAll() as $row) {
-			$id = $row['id'];
-			
-			// Create the mark if needed.
-			if (!isset($marks[$id]))
-				$marks[$id] = new Lynx_Model_Mark($id, $row['fk_user'], $row['url'], $row['title'], $row['description'], $row['notes']);
-			
-			// Populat a tag if exists
-			if (!is_null($row['tag']))
-				$marks[$id]->loadTag($row['tag']);
-		}
-		
-		return $marks;
+		return $this->getMarksFromStatement($stmt);
 	}
 	
 	/**
