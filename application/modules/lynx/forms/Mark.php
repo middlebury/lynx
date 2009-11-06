@@ -46,7 +46,7 @@ class Lynx_Form_Mark
 		
 		$this->addElement('textarea', 'notes', array(
 			'label'      => 'Notes:',
-			'required'   => true,
+			'required'   => false,
 			'filters'    => array('StringTrim', 'StripTags'),
 		));
 		
