@@ -9,7 +9,12 @@ class Lynx_PublicController extends Zend_Controller_Action
     }
     
     public function init() {
+    	parent::init();
+    	
 		$this->manager = new Lynx_Model_Manager_Public();
+		
+		$nav = $this->view->navigation()->getContainer()->findOneBy('route', 'public');
+		$nav->setActive(true);
 	}
 
     public function recentAction () {

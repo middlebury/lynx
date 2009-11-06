@@ -4,7 +4,11 @@
 class Lynx_UserController extends Zend_Controller_Action
 {
 	public function init() {
+		parent::init();
 		$this->manager = new Lynx_Model_Manager_Authenticated();
+		
+		$nav = $this->view->navigation()->getContainer()->findOneBy('route', 'user');
+		$nav->setActive(true);
 	}
 	
     public function indexAction()
@@ -23,7 +27,7 @@ class Lynx_UserController extends Zend_Controller_Action
     public function tagsAction () {
     	$tags = $this->manager->getTags();
     	foreach ($tags as $tag) {
-    		$tag->setParam('url', $this->_helper->url('viewtag', 'user', 'lynx', array('tag' => $tag->getTitle())));
+    		$tag->setParam('url', $this->view->url(array('tag' => $tag->getTitle()), 'user_tag'));
     	}
     	$this->view->cloud = new Zend_Tag_Cloud(array('itemList' => $tags));
     	$this->render('tags', null, true);
