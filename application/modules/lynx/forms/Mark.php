@@ -70,6 +70,36 @@ class Lynx_Form_Mark
 
 	}
 	
+	/**
+	 * Answer an array of unique tags strings, fully cleaned.
+	 * 
+	 * @return array
+	 * @access public
+	 * @since 11/9/09
+	 */
+	public function getTags () {
+		// Strip any extra spaces and convert to an array
+		$tags = explode(' ', preg_replace('/\s+/', ' ', $this->getValue('tags')));
+		// Trim off any trailing whitespace or separators.
+		array_walk($tags, create_function('&$tag', '$tag = trim($tag, " _");'));
+		return array_unique($tags);
+	}
+	
+	/**
+	 * Set the value of our tags element from a tags array.
+	 * 
+	 * @param array $tags
+	 * @return void
+	 * @access public
+	 * @since 11/9/09
+	 */
+	public function populateTags (array $tags) {
+		$tags = array_unique($tags);
+		sort($tags);
+		$values = $this->getValues();
+		$values['tags'] = implode(' ', $tags);
+		$this->populate($values);
+	}
 }
 
 ?>

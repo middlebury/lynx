@@ -76,14 +76,7 @@ class Lynx_Model_Manager_Authenticated
 		
 		try {
 			// Get/Insert the URL
-			$urlId = $db->fetchOne(
-				$db->select()
-					->from('url', array('id'))
-					->where('url = ?', array($url)));
-			if (!$urlId) {
-				$db->insert('url', array('url' => $url));
-				$urlId = $db->lastInsertId();
-			}
+			$urlId = $this->getUrlId($url);
 			
 			// Insert the mark
 			$db->insert('mark', array(
@@ -108,6 +101,84 @@ class Lynx_Model_Manager_Authenticated
 				throw new Exception('Already exists.');
 			else
 				throw $e;
+		} catch (Exception $e) {
+			$db->rollback();
+			throw $e;
+		}
+	}
+	
+	/**
+	 * Get/Insert the URL
+	 * 
+	 * @param string $url
+	 * @param optional string $title
+	 * @return int
+	 * @access private
+	 * @since 11/9/09
+	 */
+	private function getUrlId ($url, $title = null) {
+		if (!is_string($url) || !strlen($url))
+			throw new InvalidArgumentException('Url must be a non-zero-length string.');
+		
+		$db = $this->getDb();
+		$urlId = $db->fetchOne(
+			$db->select()
+				->from('url', array('id'))
+				->where('url = ?', array($url)));
+		if (!$urlId) {
+			$db->insert('url', array('url' => $url, 'title' => $title));
+			$urlId = $db->lastInsertId();
+		}
+		
+		return $urlId;
+	}
+	
+	/**
+	 * Save updates to a mark.
+	 * 
+	 * @param Lynx_Model_Mark $mark
+	 * @return Lynx_Model_Mark Return the mark to allow for usage.
+	 * @access public
+	 * @since 11/9/09
+	 */
+	public function saveMark (Lynx_Model_Mark $mark) {
+		if ($mark->userId != $this->userId)
+			throw new Exception('Cannot change marks for other users.');
+		
+		$oldMark = $this->getMark($mark->id);
+		
+		$db = $this->getDb();
+		$db->beginTransaction();
+		try {
+			// Changes to the mark
+			$markChanges = array();
+			
+			if ($oldMark->url != $mark->url)
+				$markChanges['fk_url'] = $this->getUrlId($mark->url);
+			if ($oldMark->description != $mark->description)
+				$markChanges['description'] = $mark->description;
+			if ($oldMark->notes != $mark->notes)
+				$markChanges['notes'] = $mark->notes;
+			
+			if (count($markChanges))
+				$db->update('mark', $markChanges, array('id = ?' => $mark->id));
+			
+			// Changes to tags.
+			$remove = array_diff($oldMark->tags, $mark->tags);
+			$add = array_diff($mark->tags, $oldMark->tags);
+			
+			foreach ($remove as $tag) {
+				$db->delete('tag', array('fk_mark = ?' => $mark->id, 'tag = ?' => $tag));
+			}
+			foreach ($add as $tag) {
+				$db->insert('tag', array('fk_mark' => $mark->id, 'tag' => $tag));
+			}
+			
+			$db->commit();
+			return $mark;
+		} catch (Zend_Db_Statement_Exception $e) {
+			$db->rollback();
+			throw $e;
 		}
 	}
 	

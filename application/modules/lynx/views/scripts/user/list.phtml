@@ -35,7 +35,7 @@ foreach ($this->paginator as $mark) {
 	
 	print "\n\t\t</div>";
 	print "\n\t\t<div class='actions'>";
-	
+	print "\n\t\t\t<a href=\"".$this->url(array('mark' => $mark->id, 'page' => null), 'user_edit')."\">EDIT</a>";
 	print "\n\t\t</div>";
 	
 	print "\n\t\t<div class='clr'></div>";

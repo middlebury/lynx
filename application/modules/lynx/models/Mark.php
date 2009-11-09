@@ -74,6 +74,37 @@ class Lynx_Model_Mark {
 	}
 	
 	/**
+	 * Update properties in preparation for saving.
+	 * 
+	 * @param string $name
+	 * @param string $value
+	 * @return void
+	 * @access public
+	 * @since 11/9/09
+	 */
+	public function __set ($name, $value) {
+		switch ($name) {
+			case 'url':
+			case 'title':
+			case 'description':
+			case 'notes':
+				$this->$name = $value;
+				return;
+			case 'tags':
+				if (!is_array($value))
+					throw new InvalidArgumentException("\$value must be an array of strings.");
+				foreach ($value as $tag) {
+					if (!is_string($tag))
+						throw new InvalidArgumentException("\$value must be an array of strings, '$tag' found.");
+				}
+				$this->tags = array_values($value);
+				return;
+			default:
+				throw new InvalidArgumentException("$name cannot be set.");
+		}
+	}
+	
+	/**
 	 * Load a tag into this object from persistant storage.
 	 * 
 	 * @param string $tag

@@ -46,13 +46,35 @@ class Lynx_UserController extends Zend_Controller_Action
         if ($this->getRequest()->isPost()) {
             if ($form->isValid($request->getPost())) {
             	$values = $form->getValues();
-				
-				// Strip any extra spaces and convert to an array
-            	$tags = explode(' ', preg_replace('/\s+/', ' ', $values['tags']));
-            	// Trim off any trailing whitespace or separators.
-            	array_walk($tags, create_function('&$tag', '$tag = trim($tag, " _");'));
-				
-                $mark = $this->manager->createMark($values['url'], $values['description'], $values['notes'], $tags);
+                $mark = $this->manager->createMark($values['url'], $values['description'], $values['notes'], $form->getTags());
+                
+                return $this->_helper->redirector('list');
+            }
+        }
+        
+        $this->view->form = $form;
+    }
+    
+    public function editAction () {
+        $request = $this->getRequest();
+        $form    = new Lynx_Form_Mark();
+        $mark = $this->manager->getMark($this->_getParam('mark'));
+        
+        $data = array(
+        	'url'			=> $mark->url,
+        	'description'	=> $mark->description,
+        	'notes'			=> $mark->notes,
+        );
+        $form->populate($data);
+        $form->populateTags($mark->tags);
+
+        if ($this->getRequest()->isPost()) {
+            if ($form->isValid($request->getPost())) {
+                $mark->url = $form->getValue('url');
+                $mark->description = $form->getValue('description');
+                $mark->notes = $form->getValue('notes');
+                $mark->tags = $form->getTags();                
+                $this->manager->saveMark($mark);
                 
                 return $this->_helper->redirector('list');
             }
