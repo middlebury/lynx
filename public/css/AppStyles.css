@@ -43,3 +43,11 @@ ul.tags li.tag {
 	border: 1px #999 solid;
 	padding: 3px;
 }
+
+.delete_form {
+	display: inline;
+}
+
+.delete_form input {
+	display: inline;
+}

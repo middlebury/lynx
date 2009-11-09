@@ -82,6 +82,8 @@ class Lynx_Form_Mark
 		$tags = explode(' ', preg_replace('/\s+/', ' ', $this->getValue('tags')));
 		// Trim off any trailing whitespace or separators.
 		array_walk($tags, create_function('&$tag', '$tag = trim($tag, " _");'));
+		// remove any empty tags
+		$tags = array_filter($tags, create_function('$tag', 'return strlen($tag);'));
 		return array_unique($tags);
 	}
 	

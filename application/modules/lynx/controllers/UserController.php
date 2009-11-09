@@ -68,7 +68,7 @@ class Lynx_UserController extends Zend_Controller_Action
         $form->populate($data);
         $form->populateTags($mark->tags);
 
-        if ($this->getRequest()->isPost()) {
+        if ($request->isPost()) {
             if ($form->isValid($request->getPost())) {
                 $mark->url = $form->getValue('url');
                 $mark->description = $form->getValue('description');
@@ -82,4 +82,39 @@ class Lynx_UserController extends Zend_Controller_Action
         
         $this->view->form = $form;
     }
+    
+    public function deleteAction () {
+    	$request = $this->getRequest();
+        $post = $request->getPost();
+    	if (!isset($post['no_ajax']) || !$post['no_ajax']) {
+			$this->_helper->layout()->disableLayout();
+			$this->_helper->viewRenderer->setNoRender();
+		}
+        try {
+			if (!$request->isPost())
+				throw new Exception("Delete only responds to POST requests.");
+			
+			
+			if (!isset($post['mark']))
+				throw new Exception("Mark id not posted.");
+			$markId = intval($post['mark']);
+			if (!$markId)
+				throw new Exception("Invalid mark id.");
+			
+			
+			$this->manager->deleteMark($markId);
+			
+			// If this was a basic form submission, just redirect.
+			if (isset($post['no_ajax']) && $post['no_ajax'])
+				return $this->_helper->redirector('list');
+			
+			// If it was an AJAX submission return a basic document.
+			$this->getResponse()->setHttpResponseCode(200);
+			$this->getResponse()->setHeader('Content-Type', 'text/plain');
+			print 'success';
+		} catch (Exception $e) {
+			$this->getResponse()->setHttpResponseCode(400);
+			print 'Error: '.$e->getMessage();
+        }	
+   }
 }

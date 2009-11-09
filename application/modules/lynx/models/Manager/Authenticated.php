@@ -183,6 +183,23 @@ class Lynx_Model_Manager_Authenticated
 	}
 	
 	/**
+	 * Save updates to a mark.
+	 * 
+	 * @param string $markId
+	 * @return void
+	 * @access public
+	 * @since 11/9/09
+	 */
+	public function deleteMark ($markId) {
+		$mark = $this->getMark($markId);
+		
+		if ($mark->userId != $this->userId)
+			throw new Exception('Cannot delete marks for other users.');
+		
+		$this->getDb()->delete('mark', array('id = ?' => $mark->id));
+	}
+	
+	/**
 	 * Answer a bookmark
 	 * 
 	 * @param int $id
