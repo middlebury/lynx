@@ -17,6 +17,18 @@ class Lynx_UserController extends Zend_Controller_Action
     }
     
     /**
+     * Search the users links
+     */
+    public function searchAction () {
+    	$this->view->query = $this->_getParam('query');
+    	$this->render('search-form');
+    	$this->view->paginator = Zend_Paginator::factory($this->manager->getMarksBySearch($this->_getParam('query')));
+    	$this->view->paginator->setCurrentPageNumber($this->_getParam('page'));
+    	
+    	$this->render('list');
+    }
+    
+    /**
      * List the users links
      */
     public function listAction () {

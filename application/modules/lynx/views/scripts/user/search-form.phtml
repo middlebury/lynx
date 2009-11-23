@@ -1,0 +1,5 @@
+<form action="<?php echo $this->url(array('query' => null, 'page' => null), 'user_search'); ?>" method="get" onsubmit=" var value =  escape(this.elements[0].value);  value = value.replace(/\//, '%2F'); var url = this.action + '/' + value; window.location = url; return false;">
+	<input type="text" size="50" name="query" value="<?php echo $this->query; ?>"/>
+	<input type="submit" value="Search"/>
+</form>
+

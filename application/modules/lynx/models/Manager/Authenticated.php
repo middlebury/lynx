@@ -273,6 +273,67 @@ class Lynx_Model_Manager_Authenticated
 	}
 	
 	/**
+	 * Answer links matching search criteria
+	 * 
+	 * @return array of Lynx_Marks
+	 * @access public
+	 * @since 11/4/09
+	 */
+	public function getMarksBySearch ($searchString) {
+		if (!is_string($searchString))
+			throw new InvalidArgumentException('$searchString must be a string.');
+			
+		$terms = explode(' ', $searchString);
+		array_walk($terms, 'trim');
+		
+		$stringTerms = array();
+		$tagTerms = array();
+		foreach ($terms as $term) {
+			if (preg_match('/^\[(.+)\]$/', $term, $matches)) {
+				$tagTerms[] = $matches[1];
+			} else {
+				$stringTerms[] = $term;
+			}
+		}
+		$tagTerms = array_unique($tagTerms);
+				
+		$select = $this->getDb()->select()
+			->from('mark',
+				array('id', 'fk_user', 'description', 'notes'))
+			->join('url', 'mark.fk_url = url.id',
+				array('url', 'title'))
+			->joinLeft(array('tag0' => 'tag'), 'tag0.fk_mark = mark.id',
+				array('tag'));
+		
+		
+		if (count($stringTerms)) {
+			$select->joinLeft('mark_fulltext', 'mark_fulltext.fk_mark = mark.id', array());
+			$select->columns(array('score' => 'MATCH mark_fulltext AGAINST('.$this->getDb()->quote(implode(' ', $stringTerms)).')'));
+			$select->where('MATCH mark_fulltext AGAINST(?)', implode(' ', $stringTerms));
+			$select->order('score DESC');
+		}
+		
+		$select->order('create_time DESC');
+		
+		// When matching tags, strictly limit to matches.
+		$i = 1;
+		foreach ($tagTerms as $tag) {
+			$name = 'tag'.$i;
+			$select->join(array($name => 'tag'), $name.'.fk_mark = mark.id', array());
+			$select->where($name.'.tag = ?', $tag);
+			$i++;
+		}
+			
+		
+		$this->addUserRestriction($select);
+		
+		var_dump($select->__toString());
+		
+		$stmt = $select->query();
+		return $this->getMarksFromStatement($stmt);
+	}
+	
+	/**
 	 * Answer all links for a given tag
 	 * 
 	 * @param string $tag
