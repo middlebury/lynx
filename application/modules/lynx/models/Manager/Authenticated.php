@@ -327,7 +327,7 @@ class Lynx_Model_Manager_Authenticated
 		
 		$this->addUserRestriction($select);
 		
-		var_dump($select->__toString());
+// 		var_dump($select->__toString());
 		
 		$stmt = $select->query();
 		return $this->getMarksFromStatement($stmt);
