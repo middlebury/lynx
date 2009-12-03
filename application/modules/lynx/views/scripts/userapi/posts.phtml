@@ -1,6 +1,8 @@
-
-<posts>
 <?php
+print "\n<posts";
+if (isset($this->matches))
+	print " matches='".$this->matches."'";
+print ">";
 
 foreach ($this->marks as $mark) {
 	print "\n\t<post href=\"".$mark->url."\"

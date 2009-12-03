@@ -18,6 +18,15 @@ class Lynx_UserapiController
 	 */
 	public function allpostsAction () {
 		$this->view->marks = $this->manager->getAllMarks();
+		$this->view->matches = count($this->view->marks);
+		
+		$start = intval($this->_getParam('start'));
+		$results = intval($this->_getParam('results'));
+		if (!$results)
+			$results = null;
+		if ($start || $results)
+			$this->view->marks = array_slice($this->view->marks, $start, $results);
+		
 		$this->render('posts');
 	}
 }
