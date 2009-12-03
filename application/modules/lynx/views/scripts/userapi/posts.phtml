@@ -1,0 +1,18 @@
+
+<posts>
+<?php
+
+foreach ($this->marks as $mark) {
+	print "\n\t<post href=\"".$mark->url."\"
+		description=\"".$this->escape($mark->description)."\"
+		extended=\"".$this->escape(nl2br($mark->notes))."\"
+		hash=\"".md5($mark->url)."\"
+		meta=\"".md5($mark->id.' '.$mark->updateTime)."\"
+		others=\""."\"
+		tag=\"".implode(' ', $mark->tags)."\"
+		time=\"".$mark->updateTime."\"
+		/>";
+}
+
+?>
+</posts>
