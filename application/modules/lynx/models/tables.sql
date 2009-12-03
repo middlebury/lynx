@@ -85,19 +85,27 @@ CREATE TABLE IF NOT EXISTS `tag` (
 DROP TRIGGER IF EXISTS `i_tag`;
 DELIMITER //
 CREATE TRIGGER `i_tag` AFTER INSERT ON `tag`
- FOR EACH ROW CALL update_mark_fulltext(NEW.fk_mark)
+ FOR EACH ROW BEGIN
+ 	CALL update_mark_fulltext(NEW.fk_mark);
+ 	UPDATE mark SET update_time = NOW() WHERE id = NEW.fk_mark;
+ END;
 //
 DELIMITER ;
 DROP TRIGGER IF EXISTS `u_tag`;
 DELIMITER //
 CREATE TRIGGER `u_tag` AFTER UPDATE ON `tag`
- FOR EACH ROW CALL update_mark_fulltext(NEW.fk_mark)
-//
+ FOR EACH ROW BEGIN
+ 	CALL update_mark_fulltext(NEW.fk_mark);
+ 	UPDATE mark SET update_time = NOW() WHERE id = NEW.fk_mark;
+ END;//
 DELIMITER ;
 DROP TRIGGER IF EXISTS `d_tag`;
 DELIMITER //
 CREATE TRIGGER `d_tag` AFTER DELETE ON `tag`
- FOR EACH ROW CALL update_mark_fulltext(OLD.fk_mark)
+ FOR EACH ROW BEGIN
+ 	CALL update_mark_fulltext(OLD.fk_mark);
+ 	UPDATE mark SET update_time = NOW() WHERE id = OLD.fk_mark;
+ END;
 //
 DELIMITER ;
 

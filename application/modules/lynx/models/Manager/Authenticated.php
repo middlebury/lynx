@@ -210,7 +210,7 @@ class Lynx_Model_Manager_Authenticated
 	public function getMark ($id) {
 		$select = $this->getDb()->select()
 			->from('mark',
-				array('id', 'fk_user', 'description', 'notes'))
+				array('id', 'fk_user', 'description', 'notes', 'update_time'))
 			->join('url', 'mark.fk_url = url.id',
 				array('url', 'title'))
 			->joinLeft('tag', 'tag.fk_mark = mark.id',
@@ -240,7 +240,7 @@ class Lynx_Model_Manager_Authenticated
 			
 			// Create the mark if needed.
 			if (!isset($marks[$id]))
-				$marks[$id] = new Lynx_Model_Mark($id, $row['fk_user'], $row['url'], $row['title'], $row['description'], $row['notes']);
+				$marks[$id] = new Lynx_Model_Mark($id, $row['fk_user'], $row['url'], $row['title'], $row['description'], $row['notes'], $row['update_time']);
 			
 			// Populat a tag if exists
 			if (!is_null($row['tag']))
@@ -260,7 +260,7 @@ class Lynx_Model_Manager_Authenticated
 	public function getAllMarks () {
 		$select = $this->getDb()->select()
 			->from('mark',
-				array('id', 'fk_user', 'description', 'notes'))
+				array('id', 'fk_user', 'description', 'notes', 'update_time'))
 			->join('url', 'mark.fk_url = url.id',
 				array('url', 'title'))
 			->joinLeft('tag', 'tag.fk_mark = mark.id',
@@ -299,7 +299,7 @@ class Lynx_Model_Manager_Authenticated
 				
 		$select = $this->getDb()->select()
 			->from('mark',
-				array('id', 'fk_user', 'description', 'notes'))
+				array('id', 'fk_user', 'description', 'notes', 'update_time'))
 			->join('url', 'mark.fk_url = url.id',
 				array('url', 'title'))
 			->joinLeft(array('tag0' => 'tag'), 'tag0.fk_mark = mark.id',
@@ -344,7 +344,7 @@ class Lynx_Model_Manager_Authenticated
 	public function getMarksForTag ($tag) {
 		$select = $this->getDb()->select()
 			->from('mark',
-				array('id', 'fk_user', 'description', 'notes'))
+				array('id', 'fk_user', 'description', 'notes', 'update_time'))
 			->join('url', 'mark.fk_url = url.id',
 				array('url', 'title'))
 			->joinLeft('tag', 'tag.fk_mark = mark.id',
