@@ -33,4 +33,12 @@ class Lynx_UserapiController
 		
 		$this->render('posts');
 	}
+	
+	/**
+	 * List the users links
+	 */
+	public function gettagsAction () {
+		$this->view->tags = $this->manager->getTags();
+		$this->render('tags');
+	}
 }

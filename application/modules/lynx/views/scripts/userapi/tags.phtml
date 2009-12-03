@@ -1,0 +1,12 @@
+
+<tags>
+<?php
+
+foreach ($this->tags as $tag) {
+	print "\n\t<tag count=\"".$tag->getWeight()."\"
+		tag=\"".$this->escape($tag->getTitle())."\"
+		/>";
+}
+
+?>
+</tags>
