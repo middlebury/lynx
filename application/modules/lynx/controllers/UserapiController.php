@@ -17,7 +17,11 @@ class Lynx_UserapiController
 	 * List the users links
 	 */
 	public function allpostsAction () {
-		$this->view->marks = $this->manager->getAllMarks();
+		if ($this->_getParam('tag'))
+			$this->view->marks = $this->manager->getMarksForTag($this->_getParam('tag'));
+		else
+			$this->view->marks = $this->manager->getAllMarks();
+		
 		$this->view->matches = count($this->view->marks);
 		
 		$start = intval($this->_getParam('start'));
