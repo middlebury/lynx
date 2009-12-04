@@ -54,7 +54,6 @@ class Lynx_Form_Mark
 			'label'      => 'Tags:',
 			'required'   => false,
 			'size'       => 92,
-			'filters'    => array('StringTrim'),
 		));
 		$tags->addFilter(new Zend_Filter_Word_CamelCaseToSeparator('_'));
 		$tags->addFilter(new Zend_Filter_Word_DashToSeparator('_'));
@@ -100,6 +99,8 @@ class Lynx_Form_Mark
 		sort($tags);
 		$values = $this->getValues();
 		$values['tags'] = implode(' ', $tags);
+		if (strlen($values['tags']))
+			$values['tags'] .= ' ';
 		$this->populate($values);
 	}
 }
