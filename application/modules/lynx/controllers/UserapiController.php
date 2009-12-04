@@ -19,6 +19,8 @@ class Lynx_UserapiController
 	public function allpostsAction () {
 		if ($this->_getParam('tag'))
 			$this->view->marks = $this->manager->getMarksForTag($this->_getParam('tag'));
+		else if ($this->_getParam('query'))
+			$this->view->marks = $this->manager->getMarksBySearch($this->_getParam('query'));
 		else
 			$this->view->marks = $this->manager->getAllMarks();
 		
