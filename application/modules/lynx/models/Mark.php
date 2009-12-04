@@ -26,6 +26,7 @@ class Lynx_Model_Mark {
 	private $notes;
 	private $tags;
 	private $updateTime;
+	private $others;
 		
 	/**
 	 * Constructor
@@ -34,11 +35,13 @@ class Lynx_Model_Mark {
 	 * @param string $url
 	 * @param string $description
 	 * @param string $notes
+	 * @param string $updateTime
+	 * @param int $others
 	 * @return void
 	 * @access public
 	 * @since 11/4/09
 	 */
-	public function __construct ($id, $userId, $url, $title, $description, $notes, $updateTime) {
+	public function __construct ($id, $userId, $url, $title, $description, $notes, $updateTime, $others) {
 		$this->id = $id;
 		$this->userId = $userId;
 		$this->url = $url;
@@ -47,6 +50,7 @@ class Lynx_Model_Mark {
 		$this->notes = $notes;
 		$this->updateTime = date('c', strtotime($updateTime));
 		$this->tags = array();
+		$this->others = $others;
 	}
 	
 	/**

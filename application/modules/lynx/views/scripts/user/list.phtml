@@ -7,6 +7,10 @@ foreach ($this->paginator as $mark) {
 	print "\n\t<li class='bookmark'>";
 	print "\n\t\t<div class='data'>";
 	
+	print "\n\t\t\t<div class='num_marks' title='Number of times bookmarked by others'>";
+	print intval($mark->others);
+	print "\n\t\t\t</div>";
+	
 	print "\n\t\t\t<h4>";
 	print "\n\t\t\t\t<a href=\"".$this->escape($mark->url)."\" target='_blank'>";
 	print $this->escape($mark->description);
