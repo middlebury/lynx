@@ -98,7 +98,7 @@ class Lynx_Model_Manager_Authenticated
 		} catch (Zend_Db_Statement_Exception $e) {
 			$db->rollback();
 			if ($e->getCode() == 23000)
-				throw new Exception('Already exists.');
+				throw new Exception('Already exists.', 23000);
 			else
 				throw $e;
 		} catch (Exception $e) {
@@ -232,6 +232,42 @@ GROUP BY url.id)')),
 		$marks = $this->getMarksFromStatement($stmt);
 		if (!count($marks))
 			throw new Exception("Mark not found with id '$id'.");
+		return current($marks);
+	}
+	
+	/**
+	 * Answer a bookmark by URL
+	 * 
+	 * @param string $url
+	 * @return Lynx_Marks
+	 * @access public
+	 * @since 11/4/09
+	 */
+	public function getMarkByUrl ($url) {
+		$select = $this->getDb()->select()
+			->from('mark',
+				array('id', 'fk_user', 'description', 'notes', 'update_time'))
+			->join('url', 'mark.fk_url = url.id',
+				array('url', 'title'))
+			->join(array('mark_counts' => new Zend_Db_Expr(
+'(SELECT 
+	url.id,
+	COUNT(mark.id) AS num_marks
+FROM 
+	url 
+	INNER JOIN mark on url.id = mark.fk_url
+GROUP BY url.id)')), 
+				'mark_counts.id = mark.fk_url',
+				array('num_marks'))
+			->joinLeft('tag', 'tag.fk_mark = mark.id',
+				array('tag'))
+			->where('url.url = ?', array($url));
+		
+		$this->addUserRestriction($select);
+		$stmt = $select->query();
+		$marks = $this->getMarksFromStatement($stmt);
+		if (!count($marks))
+			throw new Exception("Mark not found with url '$url'.");
 		return current($marks);
 	}
 	
