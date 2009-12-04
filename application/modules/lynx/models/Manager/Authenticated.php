@@ -347,9 +347,11 @@ class Lynx_Model_Manager_Authenticated
 				array('id', 'fk_user', 'description', 'notes', 'update_time'))
 			->join('url', 'mark.fk_url = url.id',
 				array('url', 'title'))
-			->joinLeft('tag', 'tag.fk_mark = mark.id',
+			->joinLeft(array('tag0' => 'tag'), 'tag0.fk_mark = mark.id',
+				array())
+			->joinLeft(array('tag1' => 'tag'), 'tag1.fk_mark = mark.id',
 				array('tag'))
-			->where('tag = ?', $tag);
+			->where('tag0.tag = ?', $tag);
 		
 		$this->addUserRestriction($select);
 		$stmt = $select->query();
