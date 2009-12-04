@@ -213,6 +213,16 @@ class Lynx_Model_Manager_Authenticated
 				array('id', 'fk_user', 'description', 'notes', 'update_time'))
 			->join('url', 'mark.fk_url = url.id',
 				array('url', 'title'))
+			->join(array('mark_counts' => new Zend_Db_Expr(
+'(SELECT 
+	url.id,
+	COUNT(mark.id) AS num_marks
+FROM 
+	url 
+	INNER JOIN mark on url.id = mark.fk_url
+GROUP BY url.id)')), 
+				'mark_counts.id = mark.fk_url',
+				array('num_marks'))
 			->joinLeft('tag', 'tag.fk_mark = mark.id',
 				array('tag'))
 			->where('mark.id = ?', array($id));
@@ -240,7 +250,7 @@ class Lynx_Model_Manager_Authenticated
 			
 			// Create the mark if needed.
 			if (!isset($marks[$id]))
-				$marks[$id] = new Lynx_Model_Mark($id, $row['fk_user'], $row['url'], $row['title'], $row['description'], $row['notes'], $row['update_time']);
+				$marks[$id] = new Lynx_Model_Mark($id, $row['fk_user'], $row['url'], $row['title'], $row['description'], $row['notes'], $row['update_time'], intval($row['num_marks']) - 1);
 			
 			// Populat a tag if exists
 			if (!is_null($row['tag']))
@@ -263,6 +273,16 @@ class Lynx_Model_Manager_Authenticated
 				array('id', 'fk_user', 'description', 'notes', 'update_time'))
 			->join('url', 'mark.fk_url = url.id',
 				array('url', 'title'))
+			->join(array('mark_counts' => new Zend_Db_Expr(
+'(SELECT 
+	url.id,
+	COUNT(mark.id) AS num_marks
+FROM 
+	url 
+	INNER JOIN mark on url.id = mark.fk_url
+GROUP BY url.id)')), 
+				'mark_counts.id = mark.fk_url',
+				array('num_marks'))
 			->joinLeft('tag', 'tag.fk_mark = mark.id',
 				array('tag'))
 			->order('create_time DESC');
@@ -302,6 +322,16 @@ class Lynx_Model_Manager_Authenticated
 				array('id', 'fk_user', 'description', 'notes', 'update_time'))
 			->join('url', 'mark.fk_url = url.id',
 				array('url', 'title'))
+			->join(array('mark_counts' => new Zend_Db_Expr(
+'(SELECT 
+	url.id,
+	COUNT(mark.id) AS num_marks
+FROM 
+	url 
+	INNER JOIN mark on url.id = mark.fk_url
+GROUP BY url.id)')), 
+				'mark_counts.id = mark.fk_url',
+				array('num_marks'))
 			->joinLeft(array('tag0' => 'tag'), 'tag0.fk_mark = mark.id',
 				array('tag'));
 		
@@ -347,6 +377,16 @@ class Lynx_Model_Manager_Authenticated
 				array('id', 'fk_user', 'description', 'notes', 'update_time'))
 			->join('url', 'mark.fk_url = url.id',
 				array('url', 'title'))
+			->join(array('mark_counts' => new Zend_Db_Expr(
+'(SELECT 
+	url.id,
+	COUNT(mark.id) AS num_marks
+FROM 
+	url 
+	INNER JOIN mark on url.id = mark.fk_url
+GROUP BY url.id)')), 
+				'mark_counts.id = mark.fk_url',
+				array('num_marks'))
 			->joinLeft(array('tag0' => 'tag'), 'tag0.fk_mark = mark.id',
 				array())
 			->joinLeft(array('tag1' => 'tag'), 'tag1.fk_mark = mark.id',
