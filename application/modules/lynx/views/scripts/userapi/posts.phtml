@@ -10,7 +10,7 @@ foreach ($this->marks as $mark) {
 		extended=\"".$this->escape(nl2br($mark->notes))."\"
 		hash=\"".md5($mark->url)."\"
 		meta=\"".md5($mark->id.' '.$mark->updateTime)."\"
-		others=\""."\"
+		others=\"".intval($mark->others)."\"
 		tag=\"".implode(' ', $mark->tags)."\"
 		time=\"".$mark->updateTime."\"
 		/>";
