@@ -57,6 +57,27 @@ class Lynx_UserapiController
 	}
 	
 	/**
+	 * Delete a link
+	 */
+	public function deletepostAction () {
+		$this->_helper->viewRenderer->setNoRender(true);
+		
+		if (!$this->_getParam('url')) {
+			print '<result code="url must be specified."/>';
+			return;
+		}
+		
+		try {
+			$mark = $this->manager->getMarkByUrl($this->_getParam('url'));
+			$this->manager->deleteMark($mark->id);
+			print '<result code="done"/>';
+			return;
+		} catch (Exception $e) {
+			print '<result code="'.htmlentities($e->getMessage()).'"/>';
+		}
+	}
+	
+	/**
 	 * List the users links
 	 */
 	public function gettagsAction () {
