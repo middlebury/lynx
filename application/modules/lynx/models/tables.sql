@@ -123,6 +123,23 @@ CREATE TABLE IF NOT EXISTS `url` (
   KEY `url_index` (`url`(255))
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=25 ;
 
+--
+-- Triggers `url`
+--
+DROP TRIGGER IF EXISTS `i_url`;
+DELIMITER //
+CREATE TRIGGER `i_url` BEFORE INSERT ON `url`
+ FOR EACH ROW SET NEW.hash = MD5(NEW.url);
+//
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS `u_url`;
+DELIMITER //
+CREATE TRIGGER `u_url` BEFORE UPDATE ON `url`
+ FOR EACH ROW SET NEW.hash = MD5(NEW.url);
+//
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --

@@ -44,8 +44,8 @@ class Lynx_UserapiController
 			$this->view->marks = array($this->manager->getMarkByUrl($this->_getParam('url')));
 		} else if ($this->_getParam('hashes')) {
 			$this->view->marks = array();
-			foreach (explode(' ', $this->_getParam('hashes')) as $hash) {
-				$this->view->marks[] = $this->manager->getMarkByHash($hash);
+			foreach (array_unique(explode(' ', $this->_getParam('hashes'))) as $hash) {
+				$this->view->marks[] = $this->manager->getMarkByUrlHash($hash);
 			}
 		} else {
 			$this->view->marks = array();

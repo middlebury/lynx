@@ -212,7 +212,7 @@ class Lynx_Model_Manager_Authenticated
 			->from('mark',
 				array('id', 'fk_user', 'description', 'notes', 'update_time'))
 			->join('url', 'mark.fk_url = url.id',
-				array('url', 'title'))
+				array('url', 'hash', 'title'))
 			->join(array('mark_counts' => new Zend_Db_Expr(
 '(SELECT 
 	url.id,
@@ -248,7 +248,7 @@ GROUP BY url.id)')),
 			->from('mark',
 				array('id', 'fk_user', 'description', 'notes', 'update_time'))
 			->join('url', 'mark.fk_url = url.id',
-				array('url', 'title'))
+				array('url', 'hash', 'title'))
 			->join(array('mark_counts' => new Zend_Db_Expr(
 '(SELECT 
 	url.id,
@@ -272,6 +272,42 @@ GROUP BY url.id)')),
 	}
 	
 	/**
+	 * Answer a bookmark by URL hash
+	 * 
+	 * @param string $hash
+	 * @return Lynx_Marks
+	 * @access public
+	 * @since 11/4/09
+	 */
+	public function getMarkByUrlHash ($hash) {
+		$select = $this->getDb()->select()
+			->from('mark',
+				array('id', 'fk_user', 'description', 'notes', 'update_time'))
+			->join('url', 'mark.fk_url = url.id',
+				array('url', 'hash', 'title'))
+			->join(array('mark_counts' => new Zend_Db_Expr(
+'(SELECT 
+	url.id,
+	COUNT(mark.id) AS num_marks
+FROM 
+	url 
+	INNER JOIN mark on url.id = mark.fk_url
+GROUP BY url.id)')), 
+				'mark_counts.id = mark.fk_url',
+				array('num_marks'))
+			->joinLeft('tag', 'tag.fk_mark = mark.id',
+				array('tag'))
+			->where('url.hash = ?', array($hash));
+		
+		$this->addUserRestriction($select);
+		$stmt = $select->query();
+		$marks = $this->getMarksFromStatement($stmt);
+		if (!count($marks))
+			throw new Exception("Mark not found with url hash '$hash'.");
+		return current($marks);
+	}
+	
+	/**
 	 * Answer marks from a statement
 	 * 
 	 * @param PDOStatement $stmt
@@ -286,7 +322,7 @@ GROUP BY url.id)')),
 			
 			// Create the mark if needed.
 			if (!isset($marks[$id]))
-				$marks[$id] = new Lynx_Model_Mark($id, $row['fk_user'], $row['url'], $row['title'], $row['description'], $row['notes'], $row['update_time'], intval($row['num_marks']) - 1);
+				$marks[$id] = new Lynx_Model_Mark($id, $row['fk_user'], $row['url'], $row['hash'], $row['title'], $row['description'], $row['notes'], $row['update_time'], intval($row['num_marks']) - 1);
 			
 			// Populat a tag if exists
 			if (!is_null($row['tag']))
@@ -308,7 +344,7 @@ GROUP BY url.id)')),
 			->from('mark',
 				array('id', 'fk_user', 'description', 'notes', 'update_time'))
 			->join('url', 'mark.fk_url = url.id',
-				array('url', 'title'))
+				array('url', 'hash', 'title'))
 			->join(array('mark_counts' => new Zend_Db_Expr(
 '(SELECT 
 	url.id,
@@ -357,7 +393,7 @@ GROUP BY url.id)')),
 			->from('mark',
 				array('id', 'fk_user', 'description', 'notes', 'update_time'))
 			->join('url', 'mark.fk_url = url.id',
-				array('url', 'title'))
+				array('url', 'hash', 'title'))
 			->join(array('mark_counts' => new Zend_Db_Expr(
 '(SELECT 
 	url.id,
@@ -412,7 +448,7 @@ GROUP BY url.id)')),
 			->from('mark',
 				array('id', 'fk_user', 'description', 'notes', 'update_time'))
 			->join('url', 'mark.fk_url = url.id',
-				array('url', 'title'))
+				array('url', 'hash', 'title'))
 			->join(array('mark_counts' => new Zend_Db_Expr(
 '(SELECT 
 	url.id,

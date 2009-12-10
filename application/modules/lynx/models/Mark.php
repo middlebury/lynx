@@ -21,6 +21,7 @@ class Lynx_Model_Mark {
 	private $id;
 	private $userId;
 	private $url;
+	private $urlHash;
 	private $title;
 	private $description;
 	private $notes;
@@ -41,10 +42,11 @@ class Lynx_Model_Mark {
 	 * @access public
 	 * @since 11/4/09
 	 */
-	public function __construct ($id, $userId, $url, $title, $description, $notes, $updateTime, $others) {
+	public function __construct ($id, $userId, $url, $urlHash, $title, $description, $notes, $updateTime, $others) {
 		$this->id = $id;
 		$this->userId = $userId;
 		$this->url = $url;
+		$this->urlHash = $urlHash;
 		$this->title = $title;
 		$this->description = $description;
 		$this->notes = $notes;
