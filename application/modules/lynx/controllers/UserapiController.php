@@ -37,6 +37,26 @@ class Lynx_UserapiController
 	}
 	
 	/**
+	 * Answers particular links
+	 */
+	public function getpostsAction () {
+		if ($this->_getParam('url')) {
+			$this->view->marks = array($this->manager->getMarkByUrl($this->_getParam('url')));
+		} else if ($this->_getParam('hashes')) {
+			$this->view->marks = array();
+			foreach (explode(' ', $this->_getParam('hashes')) as $hash) {
+				$this->view->marks[] = $this->manager->getMarkByHash($hash);
+			}
+		} else {
+			$this->view->marks = array();
+		}
+		
+		$this->view->matches = count($this->view->marks);
+				
+		$this->render('posts');
+	}
+	
+	/**
 	 * List the users links
 	 */
 	public function gettagsAction () {
