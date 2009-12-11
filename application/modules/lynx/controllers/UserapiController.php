@@ -11,6 +11,18 @@ class Lynx_UserapiController
 		$this->getResponse()->setHeader('Content-Type', 'text/xml');
 		
 		print '<'.'?xml version="1.0" encoding="UTF-8"?'.'>';
+		
+		// Verify that API calls are coming from a valid proxy application 
+		// and not directly from a user. This will limit the API's exposure
+		// to Cross-Site Request Forgery attacks.
+		// 
+		// Since our CAS is configured to only allow proxying from trusted applications,
+		// we can just check that there is a proxy. This could be updated in the future
+		// to allow a configurable list of proxies.
+		if (!count(phpCAS::getProxies())) {
+			print "\n".'<result code="API method may only be called via a CAS proxy."/>';
+			exit;
+		}
 	}
 
 	/**
