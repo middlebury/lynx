@@ -9,6 +9,9 @@ class Lynx_UserController extends Zend_Controller_Action
 		
 		$nav = $this->view->navigation()->getContainer()->findOneBy('route', 'user');
 		$nav->setActive(true);
+		
+		if (!isset($_SESSION['csrf_key']))
+			$_SESSION['csrf_key'] = md5(mt_rand());
 	}
 	
     public function indexAction()
@@ -106,6 +109,11 @@ class Lynx_UserController extends Zend_Controller_Action
 			if (!$request->isPost())
 				throw new Exception("Delete only responds to POST requests.");
 			
+			if (!isset($post['csrf_key']))
+				throw new Exception("No token specified.");
+			
+			if ($post['csrf_key'] != $_SESSION['csrf_key'])
+				throw new Exception("Request token does not match.");
 			
 			if (!isset($post['mark']))
 				throw new Exception("Mark id not posted.");
