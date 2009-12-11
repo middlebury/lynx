@@ -7,7 +7,7 @@ print ">";
 foreach ($this->marks as $mark) {
 	print "\n\t<post href=\"".$mark->url."\"
 		description=\"".$this->escape($mark->description)."\"
-		extended=\"".$this->escape(nl2br($mark->notes))."\"
+		extended=\"".$this->escape(preg_replace("/\n|\r/", "", nl2br($mark->notes)))."\"
 		hash=\"".md5($mark->url)."\"
 		meta=\"".md5($mark->id.' '.$mark->updateTime)."\"
 		others=\"".intval($mark->others)."\"
