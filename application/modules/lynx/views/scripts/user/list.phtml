@@ -43,6 +43,7 @@ foreach ($this->paginator as $mark) {
 	print "\n\t\t\t | ";
 	print "\n\t\t\t<form action=\"".$this->url(array('page' => null), 'user_delete')."\" method='post' class='delete_form' onsubmit=\"if (confirm('Really Delete?')) { } else {return false;}\">";
 	print "\n\t\t\t\t<input type='hidden' name='mark' value='".$mark->id."'/>";
+	print "\n\t\t\t\t<input type='hidden' name='csrf_key' value='".$_SESSION['csrf_key']."'/>";
 	print "\n\t\t\t\t<input type='hidden' name='no_ajax' value='1'/>";
 	print "\n\t\t\t\t<input type='submit' value='DELETE'/>";
 	print "\n\t\t\t</form>";

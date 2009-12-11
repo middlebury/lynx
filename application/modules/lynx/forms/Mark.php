@@ -66,7 +66,11 @@ class Lynx_Form_Mark
             'ignore'   => true,
             'label'    => 'Save',
         ));
-
+		
+		// And finally add some CSRF protection
+		$this->addElement('hash', 'csrf', array(
+			'ignore' => true,
+		));
 	}
 	
 	/**
