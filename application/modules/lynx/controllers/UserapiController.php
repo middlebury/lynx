@@ -94,7 +94,7 @@ class Lynx_UserapiController
 	 */
 	public function gettagsAction () {
 		$this->view->tags = $this->manager->getTags();
-		$this->render('tags');
+		$this->render('apitags', null, true);
 	}
 	
 	/**

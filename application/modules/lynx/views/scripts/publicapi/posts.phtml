@@ -1,0 +1,19 @@
+<?php
+print "\n<posts";
+if (isset($this->matches))
+	print " matches='".$this->matches."'";
+print ">";
+
+foreach ($this->links as $link) {
+	print "\n\t<post href=\"".$link->url."\"
+		description=\"".$this->escape($link->title)."\"
+		hash=\"".md5($link->url)."\"
+		meta=\"".md5($link->id.' '.$link->updateTime)."\"
+		others=\"".intval($link->numMarks)."\"
+		tag=\"".implode(' ', $link->tags)."\"
+		time=\"".$link->updateTime."\"
+		/>";
+}
+
+?>
+</posts>
