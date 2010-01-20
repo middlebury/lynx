@@ -27,17 +27,23 @@ Requirements
 	- curl
 	
 * A MySQL database version 5.0 or later.
+  The database user creating the tables and procedures will need grants to allow
+  the creation of triggers and stored procedures. If not creating the schema as
+  a SUPER user, the CREATE ROUTINE and ALTER ROUTINE grants will be needed.
+  See the following for more information:
+  http://dev.mysql.com/doc/refman/5.1/en/stored-routines-privileges.html
 
 * An operational Central Authentication Service (CAS)
 
 
 Installation
 -------------------
- * Clone the Lynx repository to a non-web-accessbile directory:
+ * Clone the Lynx repository to a NON-web-accessbile directory:
  	
  	cd /var/www/
  	git clone git://github.com/adamfranco/lynx.git
  	cd lynx
+ 	git submodule init
  	git submodule update
  	
  * Update the CAS server and database configuration lines in lynx/application/configs/application.ini
@@ -51,6 +57,15 @@ Installation
  	
  	cd /var/www/html/
  	ln -s /var/www/lynx/public/ lynx
+ 
+ * Set the APPLICATION_ENV constant to point at 'production'. 
+ 
+ 	vim lynx/public/.htaccess
+   
+   Change:
+   	SetEnv APPLICATION_ENV development
+   to:
+   	SetEnv APPLICATION_ENV production
  
  * Point your browser at the lynx directory (http://server.example.com/lynx/) and
    you should be able to log in and use Lynx.
