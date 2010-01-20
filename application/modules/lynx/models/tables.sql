@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `mark` (
   UNIQUE KEY `fk_url_2` (`fk_url`,`fk_user`),
   KEY `fk_url` (`fk_url`),
   KEY `fk_user` (`fk_user`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=36 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Triggers `mark`
@@ -53,6 +53,14 @@ CREATE TRIGGER `d_mark` AFTER DELETE ON `mark`
 //
 DELIMITER ;
 
+--
+-- RELATIONS FOR TABLE `mark`:
+--   `fk_url`
+--       `url` -> `id`
+--   `fk_user`
+--       `user` -> `id`
+--
+
 -- --------------------------------------------------------
 
 --
@@ -66,6 +74,12 @@ CREATE TABLE IF NOT EXISTS `mark_fulltext` (
   FULLTEXT KEY `mark_fulltext` (`mark_fulltext`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+--
+-- RELATIONS FOR TABLE `mark_fulltext`:
+--   `fk_mark`
+--       `mark` -> `id`
+--
+
 -- --------------------------------------------------------
 
 --
@@ -77,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `tag` (
   `tag` varchar(50) collate utf8_bin NOT NULL,
   PRIMARY KEY  (`fk_mark`,`tag`),
   KEY `fk_mark` (`fk_mark`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=36 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Triggers `tag`
@@ -105,9 +119,15 @@ CREATE TRIGGER `d_tag` AFTER DELETE ON `tag`
  FOR EACH ROW BEGIN
  	CALL update_mark_fulltext(OLD.fk_mark);
  	UPDATE mark SET update_time = NOW() WHERE id = OLD.fk_mark;
- END;
+ END
 //
 DELIMITER ;
+
+--
+-- RELATIONS FOR TABLE `tag`:
+--   `fk_mark`
+--       `mark` -> `id`
+--
 
 -- --------------------------------------------------------
 
@@ -118,10 +138,11 @@ DELIMITER ;
 CREATE TABLE IF NOT EXISTS `url` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `url` text collate utf8_bin NOT NULL,
+  `hash` varchar(40) collate utf8_bin NOT NULL COMMENT 'This field holds an MD5 hash of the url to use in searching.',
   `title` varchar(255) collate utf8_bin default NULL COMMENT 'The page title if known. Should not be user-submitted.',
   PRIMARY KEY  (`id`),
   KEY `url_index` (`url`(255))
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=25 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Triggers `url`
@@ -152,7 +173,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `display_name` varchar(50) collate utf8_bin NOT NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `login` (`login`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Constraints for dumped tables
