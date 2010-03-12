@@ -108,6 +108,10 @@ class Lynx_UserapiController
 		
 		// Run our values through the Mark-form for cleaning/validation.
 		$form    = new Lynx_Form_Mark();
+		
+		// We are assuming that the client is checking for Cross-Site Request Forgeries.
+		$form->removeElement('csrf'); 
+		
 		$params = array(
 				'url' => $this->_getParam('url'),
 				'description' => $this->_getParam('description'),
