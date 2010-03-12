@@ -13,6 +13,7 @@ foreach ($this->marks as $mark) {
 		others=\"".intval($mark->others)."\"
 		tag=\"".implode(' ', $mark->tags)."\"
 		time=\"".$mark->updateTime."\"
+		csrf_key=\"".$_SESSION['csrf_key']."\"
 		/>";
 }
 

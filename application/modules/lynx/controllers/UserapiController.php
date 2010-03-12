@@ -24,6 +24,27 @@ class Lynx_UserapiController
 			exit;
 		}
 	}
+	
+	/**
+	 * Check that a change request is coming from a previous listing and not accessed
+	 * directly
+	 * 
+	 * @return void
+	 * @access public
+	 * @since 3/12/10
+	 */
+	public function checkCSRF () {
+		try {
+			if (!$this->_getParam('csrf_key'))
+				throw new Exception("No token specified.");
+				
+			if ($this->_getParam('csrf_key') != $_SESSION['csrf_key'])
+				throw new Exception("Request token ".$this->_getParam('csrf_key')." does not match ".$_SESSION['csrf_key'].". Please log in or refresh your page again. ".session_id());
+		} catch (Exception $e) {
+			print "\n<result code='Error: ".$e->getMessage()."'/>";
+			exit;
+		}
+	}
 
 	/**
 	 * List the users links
@@ -74,6 +95,9 @@ class Lynx_UserapiController
 	public function deletepostAction () {
 		$this->_helper->viewRenderer->setNoRender(true);
 		
+		// Check that this change request is coming after a valid listing request.
+		$this->checkCSRF();
+		
 		if (!$this->_getParam('url')) {
 			print '<result code="url must be specified."/>';
 			return;
@@ -106,12 +130,15 @@ class Lynx_UserapiController
 	public function addpostAction () {
 		$this->_helper->viewRenderer->setNoRender();
 		
+		// Check that this change request is coming after a valid listing request.
+		$this->checkCSRF();
+		
 		// Run our values through the Mark-form for cleaning/validation.
 		$form    = new Lynx_Form_Mark();
 		
-		// We are assuming that the client is checking for Cross-Site Request Forgeries.
+		// We have already checked CSRF tokens, no need to do it agin.
 		$form->removeElement('csrf'); 
-		
+										
 		$params = array(
 				'url' => $this->_getParam('url'),
 				'description' => $this->_getParam('description'),
